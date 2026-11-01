@@ -1,0 +1,26 @@
+﻿# Credenciales y variables privadas
+.env
+.env.*
+!.env.example
+**/*.pubxml
+**/*.pubxml.user
+**/*.publishsettings
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/secrets.json
+
+# .NET
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+
+# Node.js
+**/node_modules/
+**/npm-debug.log*
+
+# Editores y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,49 @@
+@ClientesAPI_HostAddress = https://localhost:7178
+
+### GET todos los clientes
+GET {{ClientesAPI_HostAddress}}/api/clientes
+Accept: application/json
+
+###
+
+### GET cliente por ID
+GET {{ClientesAPI_HostAddress}}/api/clientes/1
+Accept: application/json
+
+###
+
+### POST nuevo cliente
+POST {{ClientesAPI_HostAddress}}/api/clientes
+Content-Type: application/json
+
+{
+  "cui": "4567890123404",
+  "nit": "4567890-1",
+  "nombres": "Ana Lucia",
+  "apellidos": "Martinez Gomez",
+  "direccion": "Amatitlan, Guatemala",
+  "telefono": "55554567",
+  "fechaNacimiento": "1992-03-18"
+}
+
+###
+
+### PUT actualizar cliente 4
+PUT {{ClientesAPI_HostAddress}}/api/clientes/4
+Content-Type: application/json
+
+{
+  "idCliente": 4,
+  "cui": "4567890123404",
+  "nit": "4567890-1",
+  "nombres": "Ana Lucia",
+  "apellidos": "Martinez Gomez",
+  "direccion": "Villa Nueva, Guatemala",
+  "telefono": "55559999",
+  "fechaNacimiento": "1992-03-18"
+}
+
+###
+
+### DELETE cliente 5
+DELETE {{ClientesAPI_HostAddress}}/api/clientes/5

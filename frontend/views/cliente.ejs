@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administración de Clientes</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f6f8;
+        }
+
+        .main-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .table th {
+            white-space: nowrap;
+        }
+
+        .acciones {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<!-- ===================================================== -->
+<!-- BARRA SUPERIOR -->
+<!-- ===================================================== -->
+
+<nav class="navbar navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a href="/"
+           class="navbar-brand text-decoration-none">
+            Clientes Node.js
+        </a>
+
+        <a href="/"
+           class="btn btn-outline-light btn-sm">
+            Inicio
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- ===================================================== -->
+<!-- CONTENIDO PRINCIPAL -->
+<!-- ===================================================== -->
+
+<div class="container py-4">
+
+    <div class="main-card">
+
+        <!-- ENCABEZADO -->
+
+        <div class="d-flex justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-3
+                    mb-4">
+
+            <h2 class="mb-0">
+                Administración de Clientes
+            </h2>
+
+            <button type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#nuevoModal">
+
+                + Nuevo cliente
+
+            </button>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- MENSAJES -->
+        <!-- ================================================= -->
+
+        <% if (mensaje) { %>
+
+            <% if (mensaje === "creado") { %>
+
+                <div class="alert alert-success alert-dismissible fade show">
+
+                    Cliente creado correctamente.
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            <% } else if (mensaje === "actualizado") { %>
+
+                <div class="alert alert-success alert-dismissible fade show">
+
+                    Cliente actualizado correctamente.
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            <% } else if (mensaje === "eliminado") { %>
+
+                <div class="alert alert-success alert-dismissible fade show">
+
+                    Cliente eliminado correctamente.
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
+            <% } %>
+
+        <% } %>
+
+
+        <% if (error) { %>
+
+            <div class="alert alert-danger alert-dismissible fade show">
+
+                Ocurrió un error al procesar la operación.
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        <% } %>
+
+
+        <!-- ================================================= -->
+        <!-- BUSCADOR -->
+        <!-- ================================================= -->
+
+        <div class="row mb-3">
+
+            <div class="col-md-7 col-lg-6">
+
+                <input type="text"
+                       id="buscarCliente"
+                       class="form-control"
+                       placeholder="Buscar por CUI, NIT, nombre o apellido...">
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- TABLA DE CLIENTES -->
+        <!-- ================================================= -->
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>CUI</th>
+                        <th>NIT</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Fecha nacimiento</th>
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tablaClientes">
+
+                    <% if (clientes.length > 0) { %>
+
+                        <% clientes.forEach(cliente => { %>
+
+                            <tr class="fila-cliente">
+
+                                <!-- ID -->
+                                <td>
+                                    <%= cliente.idCliente %>
+                                </td>
+
+
+                                <!-- CUI -->
+                                <td class="campo-busqueda">
+                                    <%= cliente.cui %>
+                                </td>
+
+
+                                <!-- NIT -->
+                                <td class="campo-busqueda">
+                                    <%= cliente.nit %>
+                                </td>
+
+
+                                <!-- NOMBRES -->
+                                <td class="campo-busqueda">
+                                    <%= cliente.nombres %>
+                                </td>
+
+
+                                <!-- APELLIDOS -->
+                                <td class="campo-busqueda">
+                                    <%= cliente.apellidos %>
+                                </td>
+
+
+                                <!-- DIRECCIÓN -->
+                                <td>
+                                    <%= cliente.direccion %>
+                                </td>
+
+
+                                <!-- TELÉFONO -->
+                                <td>
+                                    <%= cliente.telefono %>
+                                </td>
+
+
+                                <!-- FECHA -->
+                                <td>
+
+                                    <%= cliente.fechaNacimiento
+                                        ? new Date(
+                                            cliente.fechaNacimiento
+                                          ).toLocaleDateString("es-GT")
+                                        : ""
+                                    %>
+
+                                </td>
+
+
+                                <!-- ACCIONES -->
+                                <td class="acciones">
+
+                                    <!-- EDITAR -->
+
+                                    <button type="button"
+                                            class="btn btn-warning btn-sm text-dark"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editarModal"
+
+                                            data-id="<%= cliente.idCliente %>"
+
+                                            data-cui="<%= cliente.cui %>"
+
+                                            data-nit="<%= cliente.nit %>"
+
+                                            data-nombres="<%= cliente.nombres %>"
+
+                                            data-apellidos="<%= cliente.apellidos %>"
+
+                                            data-direccion="<%= cliente.direccion %>"
+
+                                            data-telefono="<%= cliente.telefono %>"
+
+                                            data-fecha="<%= cliente.fechaNacimiento
+                                                ? new Date(
+                                                    cliente.fechaNacimiento
+                                                  ).toISOString().split('T')[0]
+                                                : ''
+                                            %>">
+
+                                        Editar
+
+                                    </button>
+
+
+                                    <!-- ELIMINAR -->
+
+                                    <form action="/cliente/eliminar/<%= cliente.idCliente %>"
+                                          method="POST"
+                                          class="d-inline"
+                                          onsubmit="return confirm('¿Desea eliminar este cliente?')">
+
+                                        <button type="submit"
+                                                class="btn btn-danger btn-sm">
+
+                                            Eliminar
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                        <% }) %>
+
+                    <% } %>
+
+                </tbody>
+
+            </table>
+
+
+            <!-- Mensaje cuando búsqueda no encuentra registros -->
+
+            <div id="sinResultados"
+                 class="alert alert-secondary text-center d-none">
+
+                No se encontraron clientes.
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- PAGINACIÓN -->
+        <!-- ================================================= -->
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-3
+                    mt-3">
+
+            <div id="contadorClientes"
+                 class="text-muted">
+            </div>
+
+
+            <div class="d-flex align-items-center gap-2">
+
+                <button type="button"
+                        id="btnAnterior"
+                        class="btn btn-outline-secondary">
+
+                    Anterior
+
+                </button>
+
+
+                <span id="paginaActual"
+                      class="fw-semibold">
+
+                    Página 1 de 1
+
+                </span>
+
+
+                <button type="button"
+                        id="btnSiguiente"
+                        class="btn btn-outline-secondary">
+
+                    Siguiente
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- MODAL NUEVO CLIENTE -->
+<!-- ===================================================== -->
+
+<div class="modal fade"
+     id="nuevoModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <form action="/cliente"
+                  method="POST">
+
+                <!-- HEADER -->
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Nuevo Cliente
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <!-- BODY -->
+
+                <div class="modal-body">
+
+
+                    <!-- FILA 1 -->
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                CUI
+                            </label>
+
+                            <input type="text"
+                                   name="cui"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                NIT
+                            </label>
+
+                            <input type="text"
+                                   name="nit"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FILA 2 -->
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Nombres
+                            </label>
+
+                            <input type="text"
+                                   name="nombres"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Apellidos
+                            </label>
+
+                            <input type="text"
+                                   name="apellidos"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Dirección
+                        </label>
+
+                        <input type="text"
+                               name="direccion"
+                               class="form-control">
+
+                    </div>
+
+
+                    <!-- FILA 3 -->
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Teléfono
+                            </label>
+
+                            <input type="text"
+                                   name="telefono"
+                                   class="form-control">
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Fecha Nacimiento
+                            </label>
+
+                            <input type="date"
+                                   name="fecha_nacimiento"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Guardar Cliente
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- MODAL EDITAR CLIENTE -->
+<!-- ===================================================== -->
+
+<div class="modal fade"
+     id="editarModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <form id="formEditar"
+                  method="POST">
+
+                <!-- HEADER -->
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Editar Cliente
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <!-- BODY -->
+
+                <div class="modal-body">
+
+
+                    <!-- FILA 1 -->
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                CUI
+                            </label>
+
+                            <input type="text"
+                                   id="editarCui"
+                                   name="cui"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                NIT
+                            </label>
+
+                            <input type="text"
+                                   id="editarNit"
+                                   name="nit"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FILA 2 -->
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Nombres
+                            </label>
+
+                            <input type="text"
+                                   id="editarNombres"
+                                   name="nombres"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Apellidos
+                            </label>
+
+                            <input type="text"
+                                   id="editarApellidos"
+                                   name="apellidos"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Dirección
+                        </label>
+
+                        <input type="text"
+                               id="editarDireccion"
+                               name="direccion"
+                               class="form-control">
+
+                    </div>
+
+
+                    <!-- FILA 3 -->
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Teléfono
+                            </label>
+
+                            <input type="text"
+                                   id="editarTelefono"
+                                   name="telefono"
+                                   class="form-control">
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Fecha Nacimiento
+                            </label>
+
+                            <input type="date"
+                                   id="editarFecha"
+                                   name="fecha_nacimiento"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Guardar Cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- BOOTSTRAP -->
+<!-- ===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<script>
+
+// ========================================================
+// MODAL EDITAR
+// ========================================================
+
+const editarModal = document.getElementById("editarModal");
+
+editarModal.addEventListener("show.bs.modal", function (event) {
+
+    const boton = event.relatedTarget;
+
+    const id = boton.getAttribute("data-id");
+
+
+    document.getElementById("editarCui").value =
+        boton.getAttribute("data-cui");
+
+
+    document.getElementById("editarNit").value =
+        boton.getAttribute("data-nit");
+
+
+    document.getElementById("editarNombres").value =
+        boton.getAttribute("data-nombres");
+
+
+    document.getElementById("editarApellidos").value =
+        boton.getAttribute("data-apellidos");
+
+
+    document.getElementById("editarDireccion").value =
+        boton.getAttribute("data-direccion");
+
+
+    document.getElementById("editarTelefono").value =
+        boton.getAttribute("data-telefono");
+
+
+    document.getElementById("editarFecha").value =
+        boton.getAttribute("data-fecha");
+
+
+    document.getElementById("formEditar").action =
+        "/cliente/editar/" + id;
+
+});
+
+
+// ========================================================
+// BUSCADOR Y PAGINACIÓN
+// ========================================================
+
+const filas = Array.from(
+    document.querySelectorAll(".fila-cliente")
+);
+
+const buscador =
+    document.getElementById("buscarCliente");
+
+const btnAnterior =
+    document.getElementById("btnAnterior");
+
+const btnSiguiente =
+    document.getElementById("btnSiguiente");
+
+const paginaActualTexto =
+    document.getElementById("paginaActual");
+
+const contadorClientes =
+    document.getElementById("contadorClientes");
+
+const sinResultados =
+    document.getElementById("sinResultados");
+
+
+// Cantidad de registros por página
+const registrosPorPagina = 5;
+
+
+// Página inicial
+let paginaActual = 1;
+
+
+// Registros filtrados
+let filasFiltradas = [...filas];
+
+
+// ========================================================
+// FUNCIÓN MOSTRAR PÁGINA
+// ========================================================
+
+function mostrarPagina() {
+
+    // Ocultar todas las filas
+    filas.forEach(fila => {
+
+        fila.style.display = "none";
+
+    });
+
+
+    const totalRegistros =
+        filasFiltradas.length;
+
+
+    const totalPaginas =
+        Math.max(
+            1,
+            Math.ceil(
+                totalRegistros / registrosPorPagina
+            )
+        );
+
+
+    // Evita quedar en una página inexistente
+    if (paginaActual > totalPaginas) {
+
+        paginaActual = totalPaginas;
+
+    }
+
+
+    const inicio =
+        (paginaActual - 1) * registrosPorPagina;
+
+
+    const fin =
+        inicio + registrosPorPagina;
+
+
+    const filasPagina =
+        filasFiltradas.slice(inicio, fin);
+
+
+    // Mostrar registros de la página actual
+    filasPagina.forEach(fila => {
+
+        fila.style.display = "";
+
+    });
+
+
+    // Texto página
+    paginaActualTexto.textContent =
+        `Página ${paginaActual} de ${totalPaginas}`;
+
+
+    // Contador
+    if (totalRegistros === 0) {
+
+        contadorClientes.textContent =
+            "Mostrando 0 clientes";
+
+        sinResultados.classList.remove("d-none");
+
+    } else {
+
+        contadorClientes.textContent =
+            `Mostrando ${filasPagina.length} de ${totalRegistros} cliente(s)`;
+
+        sinResultados.classList.add("d-none");
+
+    }
+
+
+    // Botón anterior
+    btnAnterior.disabled =
+        paginaActual === 1 ||
+        totalRegistros === 0;
+
+
+    // Botón siguiente
+    btnSiguiente.disabled =
+        paginaActual === totalPaginas ||
+        totalRegistros === 0;
+
+}
+
+
+// ========================================================
+// BUSCAR
+// ========================================================
+
+buscador.addEventListener("input", function () {
+
+    const texto =
+        buscador.value
+            .toLowerCase()
+            .trim();
+
+
+    filasFiltradas = filas.filter(fila => {
+
+        const campos =
+            fila.querySelectorAll(
+                ".campo-busqueda"
+            );
+
+
+        const contenido =
+            Array.from(campos)
+                .map(campo =>
+                    campo.textContent
+                        .toLowerCase()
+                        .trim()
+                )
+                .join(" ");
+
+
+        return contenido.includes(texto);
+
+    });
+
+
+    // Cuando buscamos regresamos a página 1
+    paginaActual = 1;
+
+
+    mostrarPagina();
+
+});
+
+
+// ========================================================
+// ANTERIOR
+// ========================================================
+
+btnAnterior.addEventListener("click", function () {
+
+    if (paginaActual > 1) {
+
+        paginaActual--;
+
+        mostrarPagina();
+
+    }
+
+});
+
+
+// ========================================================
+// SIGUIENTE
+// ========================================================
+
+btnSiguiente.addEventListener("click", function () {
+
+    const totalPaginas =
+        Math.ceil(
+            filasFiltradas.length /
+            registrosPorPagina
+        );
+
+
+    if (paginaActual < totalPaginas) {
+
+        paginaActual++;
+
+        mostrarPagina();
+
+    }
+
+});
+
+
+// ========================================================
+// CARGA INICIAL
+// ========================================================
+
+mostrarPagina();
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: api-clientes:latest
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__AzureSql: ${AZURE_SQL_CONNECTION_STRING:?Configurar AZURE_SQL_CONNECTION_STRING}
+    networks:
+      - clientes-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: node-clientes:latest
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      API_BASE_URL: "http://api:8080/api/clientes"
+    depends_on:
+      - api
+    networks:
+      - clientes-network
+
+networks:
+  clientes-network:
+    driver: bridge
